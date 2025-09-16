@@ -1,0 +1,183 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ cv.name }} — {{ cv.title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <style>
+    :root { --ink:#111; --muted:#555; }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+
+    body {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 24px 16px;
+      font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: var(--ink);
+      background: #fff;
+      overflow-x: hidden;
+    }
+
+
+    .header { margin-bottom: 12px; }
+    .name { margin: 0; font-size: 28px; line-height: 1.2; }
+    .subtitle, .muted { color: var(--muted); margin: 4px 0 0; }
+    .summary { margin: 6px 0 0; }
+
+    .contact {
+      margin-top: 6px;
+      display: flex; flex-wrap: wrap; gap: 10px;
+      font-size: 0.95rem; color: var(--muted);
+    }
+    .contact a { color: inherit; text-decoration: none; }
+
+    section { margin-top: 24px; }
+    h2 { font-size: 16px; margin: 0 0 8px; }
+
+    article { margin: 12px 0; }
+    .row {
+      display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+    }
+    .role { font-weight: 600; }
+    .org, .date { color: var(--muted); }
+
+    .bullets { margin: 8px 0 0 18px; padding: 0; }
+    .tags   { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0; padding: 0; }
+    .tags li { border: 1px solid #ddd; padding: 2px 8px; border-radius: 999px; font-size: 0.95rem; }
+
+    a { color: inherit; }
+
+    .grid { display: block; }
+    main, aside { width: 100%; }
+
+    @media print {
+      body { max-width: 100%; padding: 0.5in; }
+      a { text-decoration: none; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div>
+      <h1 class="name">{{ cv.name }}</h1>
+      <p class="subtitle">
+        {{ cv.title }}{% if cv.location %} · {{ cv.location }}{% endif %}
+      </p>
+      {% if cv.summary %}<p class="summary">{{ cv.summary }}</p>{% endif %}
+    </div>
+    <div class="contact">
+      {% if cv.phone %}<span><a href="tel:{{ cv.phone }}">{{ cv.phone }}</a></span>{% endif %}
+      {% if cv.email %}<span><a href="mailto:{{ cv.email }}">{{ cv.email }}</a></span>{% endif %}
+      {% if cv.linkedin %}<span><a href="https://linkedin.com/in/{{ cv.linkedin }}">linkedin.com/in/{{ cv.linkedin }}</a></span>{% endif %}
+      {% if cv.github %}<span><a href="https://github.com/{{ cv.github }}">github.com/{{ cv.github }}</a></span>{% endif %}
+    </div>
+  </header>
+
+  <div class="grid">
+    <main>
+      {% if cv.experience %}
+      <section>
+        <h2>Experience</h2>
+        {% for job in cv.experience %}
+        <article>
+          <div class="row">
+            <div>
+              <div class="role">{{ job.role }}</div>
+              <div class="org">{{ job.company }}{% if job.location %} · {{ job.location }}{% endif %}</div>
+            </div>
+            <div class="date">
+              {% if job.start %}{{ job.start }}{% endif %}{% if job.end %} – {{ job.end }}{% else %} – Present{% endif %}
+            </div>
+          </div>
+          {% if job.bullets %}
+          <ul class="bullets">
+            {% for b in job.bullets %}<li>{{ b }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+        </article>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      {% if cv.projects %}
+      <section>
+        <h2>Projects</h2>
+        {% for p in cv.projects %}
+        <article>
+          <div class="row">
+            <div>
+              <div class="role">{{ p.name }}</div>
+              {% if p.stack %}<div class="org">{{ p.stack }}</div>{% endif %}
+            </div>
+            {% if p.date %}<div class="date">{{ p.date }}</div>{% endif %}
+          </div>
+          {% if p.bullets %}
+          <ul class="bullets">
+            {% for b in p.bullets %}<li>{{ b }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+        </article>
+        {% endfor %}
+      </section>
+      {% endif %}
+    </main>
+
+    <aside>
+      {% if cv.education %}
+      <section>
+        <h2>Education</h2>
+        {% for e in cv.education %}
+        <article>
+          <div class="row">
+            <div>
+              <div class="role">{{ e.degree }}</div>
+              <div class="org">{{ e.school }}{% if e.location %} · {{ e.location }}{% endif %}</div>
+            </div>
+            <div class="date">
+              {% if e.start %}{{ e.start }}{% endif %}{% if e.end %} – {{ e.end }}{% endif %}
+            </div>
+          </div>
+          {% if e.coursework %}
+          <div class="muted">Relevant: {{ e.coursework|join:", " }}</div>
+          {% endif %}
+        </article>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      {% if cv.skills %}
+      <section>
+        <h2>Technical Skills</h2>
+        {% if cv.skills.languages %}
+          <div class="role">Languages</div>
+          <ul class="tags">{% for s in cv.skills.languages %}<li>{{ s }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if cv.skills.frameworks %}
+          <div class="role" style="margin-top:10px;">Frameworks / Libraries</div>
+          <ul class="tags">{% for s in cv.skills.frameworks %}<li>{{ s }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if cv.skills.cloud_tools %}
+          <div class="role" style="margin-top:10px;">Cloud / Tools</div>
+          <ul class="tags">{% for s in cv.skills.cloud_tools %}<li>{{ s }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if cv.skills.certifications %}
+          <div class="role" style="margin-top:10px;">Certifications</div>
+          <ul class="list">{% for s in cv.skills.certifications %}<li>{{ s }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if cv.skills.achievements %}
+          <div class="role" style="margin-top:10px;">Achievements</div>
+          <ul class="list">{% for s in cv.skills.achievements %}<li>{{ s }}</li>{% endfor %}</ul>
+        {% endif %}
+      </section>
+      {% endif %}
+    </aside>
+  </div>
+
+</body>
+</html>
