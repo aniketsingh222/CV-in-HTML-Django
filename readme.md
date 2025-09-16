@@ -1,5 +1,5 @@
-#How to run
-##Make sure you are in the folder cv then run 
+# How to run
+## Make sure you are in the folder cv then run 
 
 ```bash
 python manage.py runserver
